@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .incorrect-answers {
+            margin-top: 20px;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .options label {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Quiz Results</h1>
+    <div class="score">Your Score: <span id="score"></span></div>
+
+    <div class="incorrect-answers">
+        <h3>Incorrect Answers</h3>
+        <div id="wrong-answers"></div>
+    </div>
+
+    <script>
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Get score and wrong answers from URL parameters
+        const score = getUrlParameter('score');
+        const wrongAnswers = JSON.parse(decodeURIComponent(getUrlParameter('wrongAnswers')));
+
+        // Display the score
+        document.getElementById('score').textContent = `${score} out of ${wrongAnswers.length + parseInt(score)}`;
+
+        // Display incorrect answers and their options
+        const wrongAnswersContainer = document.getElementById('wrong-answers');
+        wrongAnswers.forEach(answer => {
+            const questionNumber = answer.question.slice(1);
+            const questionText = document.querySelector(`p:contains("${questionNumber}.")`).textContent;
+
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
+            questionDiv.innerHTML = `
+                <p><strong>Question ${questionNumber}: </strong>${questionText}</p>
+                <p><strong>Your Answer:</strong> ${answer.selectedAnswer}</p>
+                <p><strong>Correct Answer:</strong> ${answer.correctAnswer}</p>
+            `;
+
+            wrongAnswersContainer.appendChild(questionDiv);
+        });
+    </script>
+</body>
+</html>
